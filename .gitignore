@@ -1,0 +1,5 @@
+.env
+.env.*
+*.env
+.env.txt
+.env1.txt

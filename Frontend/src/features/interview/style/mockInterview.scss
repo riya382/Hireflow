@@ -1,0 +1,63 @@
+.mock-interview {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    color: white;
+}
+
+.question-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.answer-box {
+    width: 100%;
+    min-height: 220px;
+    background: #1c2230;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    color: white;
+    padding: 20px;
+    font-size: 16px;
+}
+
+.submit-btn {
+    background: linear-gradient(
+        135deg,
+        #ff2d78,
+        #ff4d94
+    );
+
+    border: none;
+    color: white;
+    padding: 14px 30px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.feedback-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 25px;
+}
+
+.score {
+    color: #22c55e;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.completed-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+}
