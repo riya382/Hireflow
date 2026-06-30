@@ -1,25 +1,60 @@
-# Preply - AI-Powered Interview Coach & Performance Diagnostics Platform
+# Preply - AI-Powered Interview Coach 🚀
 
-Preply is an enterprise-grade technical and behavioral mock interview preparation application designed to help candidates clear rigorous hiring loops. By contextually blending real-world job requirements with candidate profiles, the platform provides tailored mock evaluation queues, real-time analytics, and automatic standard ATS metric reporting.
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
----
-
-## 🚀 Key Core Architectural Features
-
-* **Context-Aware Question Generation:** Leverages advanced LLM token orchestration through the `gemini-2.5-flash` model to analyze candidate resumes side-by-side with target job descriptions.
-* **Multi-Modal Document Parsing:** Intercepts raw binary PDF streams via `multer` middlewares and parses text inputs dynamically using the `pdf-parse` engine.
-* **Strict Structural Constraints (Zod Validation):** Enforces rigorous JSON layout payloads utilizing Zod schemas (`zod-to-json-schema`), avoiding downstream unstructured formatting breaks.
-* **100% Free Voice Automation (Native Web Speech API):** Implements text-to-speech loops built entirely into standard client-side browser interfaces, eliminating the need for premium, rate-limited cloud voice pipelines.
-* **Granular Scorecard Dashboard:** Delivers instant evaluation responses after every submitted answer, wrapping up into a complete dynamic post-interview report outlining candidate attempts, ideal answer benchmarks, and key growth gaps.
+Elevate your interview preparation to the next level with the power of Gemini AI. Get instant semantic analysis, real-time audio/text interactive mock sessions, data-driven feedback loops, and automated standard ATS metric reporting in seconds.
 
 ---
 
-## 🔥 Key Product Features Included
+## 🌐 Live Demo
 
-* **Interactive Coding & Behavioral Panel:** Live timer systems supporting preset intervals ($1\text{m}, 2\text{m}, 3\text{m}, 5\text{m}$) along with custom manual overwriting fields.
-* **ATS Compatibility Analytics:** Real-time semantic checking models returning dynamic Match Scores ($0-100\%$) indicating real corporate filtering bypass probabilities.
-* **Dynamic Step-by-Step Hints:** Smart hint blocks highlighting key system design patterns or conceptual domains if a candidate gets stuck.
-* **End-to-End Performance History:** Complete post-session diagnostic screens displaying overall scorecards, user responses compared side-by-side with ideal answers, and granular structural replacement advice.
+[Preply - Live Platform Link](#) *(Add deployment link here later)*
+
+---
+
+## 📋 Table of Contents
+
+1. [About The Project](#-about-the-project)
+2. [Key Features](#-key-features)
+3. [Tech Stack](#-tech-stack)
+4. [System Directory Tree Structure](#-system-directory-tree-structure)
+5. [Getting Started](#-getting-started)
+6. [Environment Variables](#-environment-variables)
+7. [API Endpoints](#-api-endpoints)
+8. [License](#-license)
+
+---
+
+## 📖 About The Project
+
+Preply is an enterprise-grade technical and behavioral mock interview preparation application designed to help job seekers eliminate traditional workspace guessing games. By contextually blending real-world job criteria directly with candidate profile metrics, the platform builds responsive, target-specific simulation tracks. This guarantees objective diagnostic data, highlighting key technical gap matrices while optimizing individual confidence.
+
+---
+
+## ✨ Key Features
+
+* **Secure User Authentication:** JWT-based login, registration tokens, and strict private session route guards.
+* **Context-Aware Question Generation:** Integrates advanced LLM token workflows through the `gemini-2.5-flash` model to analyze candidate resume text buffers side-by-side with target job descriptions.
+* **ATS Compatibility Analytics:** Real-time semantic checking loops returning dynamic Match Scores ($0-100\%$) indicating real corporate pipeline filter bypass probabilities.
+* **100% Free Voice Automation:** Implements smooth text-to-speech feedback loops built natively on top of the client-side Web Speech API, eliminating premium external cloud service dependencies.
+* **Granular Scorecard History:** Delivers dynamic real-time inline evaluation components after every submitted question, updating seamlessly into a complete post-interview report detailing comprehensive user answers, structural flaws, and baseline ideal answers.
+
+---
+
+## 🛠️ Tech Stack
+
+This project is built with a modern MERN stack and leading AI architectures.
+
+| Frontend | Backend | Database | AI / Auth |
+| :--- | :--- | :--- | :--- |
+| React (Vite) | Node.js | MongoDB Atlas | Google Gemini SDK |
+| Tailwind CSS | Express.js | Mongoose ODM | JWT & bcryptjs |
+| React Router | Axios | | Web Speech API |
+| FontAwesome | `pdf-parse` | | |
 
 ---
 
