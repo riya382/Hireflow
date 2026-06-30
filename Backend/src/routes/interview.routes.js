@@ -6,7 +6,6 @@ const upload = require("../middlewares/file.middleware")
 const interviewRouter = express.Router()
 
 
-
 /**
  * @route POST /api/interview/
  * @description generate new interview report on the basis of user self description,resume pdf and job description.
@@ -55,4 +54,6 @@ interviewRouter.get(
     interviewController.getMockInterviewResultController
 )
 
-module.exports = interviewRouter
+// ✨ ElevenLabs ka /speak route yahan se poori tarah delete kar diya gaya hai.
+
+module.exports = interviewRouter;
