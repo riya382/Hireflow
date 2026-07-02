@@ -121,10 +121,14 @@ function Timer({ onTimeUp }) {
   );
 }
 
-// ✨ ADVANCED SUMMARY SCREEN: Shows global stats + detailed questions review cards
 function SummaryScreen({ records, onRetry, onNew }) {
   const navigate = useNavigate();
   const avgScore = records.length ? Math.round((records.reduce((sum, item) => sum + item.feedback.score, 0) / records.length) * 10) : 0;
+
+  // FIXED: Summary report sheet load hote hi tab text update hoga
+  useEffect(() => {
+    document.title = "HireFlow - Interview Scorecard"
+  }, [])
 
   return (
     <div style={{ minHeight: "100vh", width: "100vw", background: C.bg, display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 20px", overflowY: "auto" }}>
@@ -143,7 +147,6 @@ function SummaryScreen({ records, onRetry, onNew }) {
         </div>
       </div>
 
-      {/* Dynamic Review Cards Container */}
       <div style={{ width: "100%", maxWidth: "800px", display: "flex", flexDirection: "column", gap: "20px" }}>
         <h3 style={{ fontSize: "16px", fontWeight: 700, color: C.sub, textTransform: "uppercase", letterSpacing: "0.5px", margin: "10px 0 0" }}>Detailed Question Breakdown</h3>
         
@@ -160,11 +163,11 @@ function SummaryScreen({ records, onRetry, onNew }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
               <div style={{ background: "#06030c", borderRadius: "10px", padding: "14px", border: `1px solid ${C.cardBorder}` }}>
                 <span style={{ fontSize: "11px", fontWeight: 700, color: C.muted, textTransform: "uppercase" }}>Your Attempted Answer</span>
-                <p style={{ fontSize: "13.5px", color: C.text, marginTop: "8px", margin: "8px 0 0", lineHeight: 1.5 }}>{item.candidateAnswer || "N/A (No answer recorded)"}</p>
+                <p style={{ fontSize: "13.5px", color: C.text, margin: "8px 0 0", lineHeight: 1.5 }}>{item.candidateAnswer || "N/A (No answer recorded)"}</p>
               </div>
               <div style={{ background: "#052e1622", borderRadius: "10px", padding: "14px", border: `1px solid ${C.greenLight}` }}>
                 <span style={{ fontSize: "11px", fontWeight: 700, color: C.greenText, textTransform: "uppercase" }}>Ideal Expected Answer</span>
-                <p style={{ fontSize: "13.5px", color: C.sub, marginTop: "8px", margin: "8px 0 0", lineHeight: 1.5 }}>{item.question.answer}</p>
+                <p style={{ fontSize: "13.5px", color: C.sub, margin: "8px 0 0", lineHeight: 1.5 }}>{item.question.answer}</p>
               </div>
             </div>
 
@@ -196,9 +199,12 @@ const MockInterview = () => {
   const [answer, setAnswer] = useState(""); const [feedback, setFeedback] = useState(null);
   const [completed, setCompleted] = useState(false); const [isListening, setIsListening] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); const [showHint, setShowHint] = useState(false);
-  
-  // ✨ Global Array to keep absolute history logs for the Summary Card components
   const [sessionRecords, setSessionRecords] = useState([]);
+
+  // FIXED: On component mount, update browser tab title
+  useEffect(() => {
+    document.title = "HireFlow - Live AI Mock Panel"
+  }, [])
 
   useEffect(() => {
     const start = async () => {
@@ -234,7 +240,6 @@ const MockInterview = () => {
 
     setFeedback(data.evaluation);
     
-    // ✨ Push explicitly tracking both targets into global arrays for scorecard rendering
     setSessionRecords((prev) => [
       ...prev,
       { question: currentQuestionContext, candidateAnswer: currentAnswerContext, feedback: data.evaluation }
@@ -244,16 +249,15 @@ const MockInterview = () => {
       setTimeout(() => {
         setCompleted(true);
         window.speechSynthesis.cancel();
-      }, 8000); // ✨ 8 seconds delay so they can easily read inline real-time feedback before scorecard shifts!
+      }, 8000); 
     } else { 
-      // Delay question shift slightly so user can visually intercept real-time responses
       setTimeout(() => {
         setQuestion(data.nextQuestion); 
         setQuestionNumber((n) => n + 1); 
         if (data.totalQuestions) setTotalQuestions(data.totalQuestions);
         setAnswer(""); 
         setShowHint(false); 
-        setFeedback(null); // Clear inline response block for new incoming queue
+        setFeedback(null); 
         speakText(data.nextQuestion.question);
       }, 8000);
     }
@@ -270,13 +274,19 @@ const MockInterview = () => {
     <div style={{ minHeight: "100vh", background: C.bg, display: "flex", flexDirection: "column", width: "100vw", overflowX: "hidden" }}>
       <style>{`* { box-sizing: border-box; }`}</style>
       
+      {/* FIXED: Replaced Preply typography badge with uniform Hireflow header items */}
       <header style={{ height: '92px', background: 'linear-gradient(to bottom, #110b24, #0e0a1a)', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 40px', flexShrink: 0, boxShadow: `0 4px 24px rgba(7, 4, 14, 0.6)` }}>
         <div style={{ width: '100%', maxWidth: '1200px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 800, color: '#fff' }}>P</div>
-            <span style={{ fontSize: '20px', fontWeight: 800, background: `linear-gradient(135deg, #ffffff 30%, ${C.sub} 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '0.5px' }}>Preply</span>
+          <div onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 900, color: '#fff', boxShadow: `0 0 20px ${C.glow}77` }}>
+              H
+            </div>
+            <div style={{ fontSize: '24px', fontWeight: '900', letterSpacing: '-0.8px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ color: '#ffffff' }}>Hire</span>
+              <span style={{ color: '#e9d5ff', fontWeight: '300', marginLeft: '2px' }}>flow</span>
+            </div>
           </div>
-          <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: C.pinkLight, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: C.pink, border: `2px solid ${C.pink}55` }}>R</div>
+          <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: C.pinkLight, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: C.pink, border: `2px solid ${C.pink}55`, boxShadow: `0 0 12px ${C.pink}33` }}>R</div>
         </div>
       </header>
 
@@ -325,7 +335,6 @@ const MockInterview = () => {
           <button onClick={handleSubmit} disabled={isSubmitting} style={{ width: "100%", padding: "12px", borderRadius: "10px", background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, color: "white", border: "none", fontSize: "14.5px", fontWeight: 700, cursor: "pointer", boxShadow: `0 4px 14px ${C.glow}33` }}>{isSubmitting ? "Evaluating..." : "Submit answer"}</button>
         </div>
 
-        {/* ✨ REAL-TIME LIVE INTERACTIVE FEEDBACK (Sath-sath evaluation view) */}
         {feedback && (
           <div style={{ background: C.cardBg, borderRadius: "14px", padding: "20px", border: `1px solid ${C.pink}`, boxShadow: `0 0 16px ${C.glow}22`, animation: "fadeIn 0.3s ease" }}>
             <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`}</style>

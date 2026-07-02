@@ -131,6 +131,11 @@ const Interview = () => {
 
   useEffect(() => { if (interviewId) getReportById(interviewId) }, [interviewId])
 
+  // FIXED: Browser tab title updates on mount to HireFlow
+  useEffect(() => {
+    document.title = "HireFlow - AI Interview Strategy"
+  }, [])
+
   if (loading || !report) {
     return (
       <div style={{ minHeight: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px' }}>
@@ -144,24 +149,32 @@ const Interview = () => {
   const severityColor = (sev) => {
     if (sev === 'high')   return { bg: C.amberLight,   text: '#fcd34d' }
     if (sev === 'medium') return { bg: `${C.pink}18`, text: C.sub }
-    return                       { bg: C.greenLight,  text: C.greenText }
+    return                               { bg: C.greenLight,  text: C.greenText }
   }
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, padding: '0', display: 'flex', flexDirection: 'column' }}>
       <style>{`* { box-sizing: border-box; }`}</style>
 
-      {/* Navbar with Preply Name */}
+      {/* FIXED: Navbar replaced with sharp custom Hireflow text alignment */}
       <header style={{ height: '92px', background: 'linear-gradient(to bottom, #110b24, #0e0a1a)', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 40px', flexShrink: 0, boxShadow: `0 4px 24px rgba(7, 4, 14, 0.6)` }}>
         <div style={{ width: '100%', maxWidth: '1200px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          
           <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-            <div onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 800, color: '#fff' }}>P</div>
-              <span style={{ fontSize: '20px', fontWeight: 800, background: `linear-gradient(135deg, #ffffff 30%, ${C.sub} 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '0.5px' }}>Preply</span>
+            <div onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+              {/* Sleek Gradient Icon badge */}
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 900, color: '#fff', boxShadow: `0 0 20px ${C.glow}77` }}>
+                H
+              </div>
+              <div style={{ fontSize: '24px', fontWeight: '900', letterSpacing: '-0.8px', display: 'flex', alignItems: 'center' }}>
+                <span style={{ color: '#ffffff' }}>Hire</span>
+                <span style={{ color: '#e9d5ff', fontWeight: '300', marginLeft: '2px' }}>flow</span>
+              </div>
             </div>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#fff', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, padding: '5px 14px', borderRadius: '20px' }}>Strategy</span>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: '#fff', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, padding: '5px 14px', borderRadius: '20px', boxShadow: `0 2px 10px ${C.glow}44` }}>Strategy</span>
           </div>
-          <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: C.pinkLight, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: C.pink, border: `2px solid ${C.pink}55` }}>R</div>
+
+          <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: C.pinkLight, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: C.pink, border: `2px solid ${C.pink}55`, boxShadow: `0 0 12px ${C.pink}33` }}>R</div>
         </div>
       </header>
 

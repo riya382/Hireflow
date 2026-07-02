@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate } from 'react-router'
 
@@ -46,6 +46,11 @@ const Home = () => {
   const resumeInputRef = useRef()
   const navigate = useNavigate()
 
+  // FIXED: Browser tab ka title badal kar HireFlow kiya
+  useEffect(() => {
+    document.title = "HireFlow - Dashboard"
+  }, [])
+
   const handleGenerateReport = async () => {
     const resumeFile = resumeInputRef.current?.files[0]
     const data = await generateReport({ jobDescription, selfDescription, resumeFile })
@@ -76,23 +81,20 @@ const Home = () => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden', background: C.bg, fontFamily: 'inherit' }}>
       <style>{`* { box-sizing: border-box; }`}</style>
 
-      {/* Navbar with Preply Name */}
+      {/* FIXED: Navbar branding change kiya with matching layout styles */}
       <header style={{ height: '92px', background: 'linear-gradient(to bottom, #110b24, #0e0a1a)', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 40px', flexShrink: 0, boxShadow: `0 4px 24px rgba(7, 4, 14, 0.6)` }}>
         <div style={{ width: '100%', maxWidth: '1200px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 800, color: '#fff', boxShadow: `0 0 20px ${C.glow}77` }}>P</div>
-              <span style={{ 
-                fontSize: '20px', 
-                fontWeight: 800, 
-                background: `linear-gradient(135deg, #ffffff 30%, ${C.sub} 100%)`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                letterSpacing: '0.5px' 
-              }}>
-                Preply
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+              {/* Clean matching H badge */}
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 900, color: '#fff', boxShadow: `0 0 20px ${C.glow}77` }}>
+                H
+              </div>
+              <div style={{ fontSize: '24px', fontWeight: '900', letterSpacing: '-0.8px', display: 'flex', alignItems: 'center' }}>
+                <span style={{ color: '#ffffff' }}>Hire</span>
+                <span style={{ color: '#e9d5ff', fontWeight: '300', marginLeft: '2px' }}>flow</span>
+              </div>
             </div>
             <span style={{ fontSize: '12px', fontWeight: 600, color: '#fff', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, padding: '5px 14px', borderRadius: '20px', boxShadow: `0 2px 10px ${C.glow}44`, letterSpacing: '0.3px' }}>Dashboard</span>
           </div>
@@ -188,15 +190,15 @@ const Home = () => {
                 </div>
               )}
             </div>
-                    <button
-  onClick={handleGenerateReport}
-  style={{ display: 'flex', alignItems: 'center', gap: '0px', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, color: 'white', border: 'none', borderRadius: '10px', padding: '12px 24px', fontSize: '14.5px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: `0 4px 16px ${C.glow}33`, flexShrink: 0 }}
-  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = `0 6px 20px ${C.glow}44` }}
-  onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = `0 4px 16px ${C.glow}33` }}
->
-  Generate my interview strategy
-</button>
-           
+            
+            <button
+              onClick={handleGenerateReport}
+              style={{ display: 'flex', alignItems: 'center', gap: '0px', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, color: 'white', border: 'none', borderRadius: '10px', padding: '12px 24px', fontSize: '14.5px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: `0 4px 16px ${C.glow}33`, flexShrink: 0 }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = `0 6px 20px ${C.glow}44` }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = `0 4px 16px ${C.glow}33` }}
+            >
+              Generate my interview strategy
+            </button>
           </div>
 
         </div>
