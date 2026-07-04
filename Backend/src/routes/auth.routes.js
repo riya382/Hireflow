@@ -6,11 +6,10 @@ const authRouter = Router()
 
 /**
  * @route POST /api/auth/register
- * @description Register a new user
+ * @description Register a new user & send OTP
  * @access Public
  */
 authRouter.post("/register", authController.registerUserController)
-
 
 /**
  * @route POST /api/auth/login
