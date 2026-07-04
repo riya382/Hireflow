@@ -4,7 +4,7 @@ import Home from "./features/interview/pages/Home";
 import Interview from "./features/interview/pages/Interview";
 import MockInterview from "./features/interview/pages/MockInterview";
 import LoginSignup from "./features/auth/pages/LoginSignup";
-import History from "./features/interview/pages/history.jsx"; // Path resolve fix karne ke liye extension add kiya
+import History from "./features/interview/pages/userHistory.jsx";// Path resolve fix karne ke liye extension add kiya
 
 export const router = createBrowserRouter([
     {
