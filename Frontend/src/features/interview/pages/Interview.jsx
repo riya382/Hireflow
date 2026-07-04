@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate, useParams } from 'react-router'
+import { AuthContext } from '../../auth/auth.context.jsx'
+import { useAuth } from '../../auth/hooks/useAuth.js' 
 
 const C = {
   pink:       '#9333ea',
@@ -76,7 +78,7 @@ const QuestionCard = ({ item, index }) => {
 
 const QuestionList = ({ items }) => (
   <div style={{ display: 'flex', flexDirection: 'column' }}>
-    {items.map((q, i) => <QuestionCard key={i} item={q} index={i} />)}
+    {items?.map((q, i) => <QuestionCard key={i} item={q} index={i} />) || <p style={{ color: C.muted }}>No questions available.</p>}
   </div>
 )
 
@@ -87,7 +89,7 @@ const RoadMapDay = ({ day }) => (
       <h3 style={{ fontSize: '14px', fontWeight: 600, color: C.text, margin: 0 }}>{day.focus}</h3>
     </div>
     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      {day.tasks.map((task, i) => (
+      {day.tasks?.map((task, i) => (
         <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: C.muted, lineHeight: 1.5 }}>
           <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: C.pink, flexShrink: 0, marginTop: '6px', boxShadow: `0 0 6px ${C.glow}` }} />
           {task}
@@ -100,7 +102,7 @@ const RoadMapDay = ({ day }) => (
 const ScoreRing = ({ score }) => {
   const r = 52
   const circ = 2 * Math.PI * r
-  const offset = circ * (1 - score / 100)
+  const offset = circ * (1 - (score || 0) / 100)
   const color = score >= 80 ? C.greenText : score >= 60 ? '#fcd34d' : C.pink
   return (
     <div style={{ position: 'relative', width: '130px', height: '130px' }}>
@@ -114,7 +116,7 @@ const ScoreRing = ({ score }) => {
         />
       </svg>
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', textAlign: 'center' }}>
-        <div style={{ fontSize: '28px', fontWeight: 700, color: C.text }}>{score}</div>
+        <div style={{ fontSize: '28px', fontWeight: 700, color: C.text }}>{score || 0}</div>
         <div style={{ fontSize: '11px', color: C.muted }}>%</div>
       </div>
     </div>
@@ -124,17 +126,54 @@ const ScoreRing = ({ score }) => {
 const Interview = () => {
   const [activeNav, setActiveNav] = useState('technical')
   const [expandedGapIndex, setExpandedGapIndex] = useState(null)
+  const [fetchError, setFetchError] = useState(false)
 
-  const { report, getReportById, loading, getResumePdf } = useInterview()
+  const { report, getReportById, loading } = useInterview()
   const { interviewId } = useParams()
   const navigate = useNavigate()
 
-  useEffect(() => { if (interviewId) getReportById(interviewId) }, [interviewId])
+  const authMethods = useAuth()
+  const logoutFunction = authMethods?.handleLogout || authMethods?.logout || authMethods?.handleSignOut
+  const { user, setUser } = useContext(AuthContext)
+  const avatarInitial = user?.username ? user.username.charAt(0).toUpperCase() : (user?.name ? user.name.charAt(0).toUpperCase() : 'R')
 
-  // FIXED: Browser tab title updates on mount to HireFlow
+  useEffect(() => { 
+    if (interviewId) {
+      getReportById(interviewId).catch((err) => {
+        console.error("Failed loading blueprint:", err);
+        setFetchError(true);
+      });
+    } 
+  }, [interviewId])
+
   useEffect(() => {
     document.title = "HireFlow - AI Interview Strategy"
   }, [])
+
+  const onLogoutClick = async () => {
+    try {
+      if (typeof logoutFunction === 'function') {
+        await logoutFunction()
+      }
+      if(setUser) setUser(null)
+      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+      navigate('/login', { replace: true })
+    } catch (err) {
+      console.error("Logout process failed:", err)
+      navigate('/login', { replace: true })
+    }
+  }
+
+  if (fetchError) {
+    return (
+      <div style={{ height: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '20px' }}>
+        <p style={{ fontSize: '18px', color: '#ef4444', fontWeight: 600 }}>Backend Failed to load your Strategy (Status 500)</p>
+        <button onClick={() => navigate('/')} style={{ background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 700 }}>
+          Go Back to Dashboard
+        </button>
+      </div>
+    )
+  }
 
   if (loading || !report) {
     return (
@@ -156,14 +195,12 @@ const Interview = () => {
     <div style={{ minHeight: '100vh', background: C.bg, padding: '0', display: 'flex', flexDirection: 'column' }}>
       <style>{`* { box-sizing: border-box; }`}</style>
 
-      {/* FIXED: Navbar replaced with sharp custom Hireflow text alignment */}
-      <header style={{ height: '92px', background: 'linear-gradient(to bottom, #110b24, #0e0a1a)', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 40px', flexShrink: 0, boxShadow: `0 4px 24px rgba(7, 4, 14, 0.6)` }}>
+      <header style={{ height: '92px', background: 'linear-gradient(to bottom, #110b24, #0e0a1a)', borderBottom: `1px solid ${C.cardBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 40px', flexShrink: 0 }}>
         <div style={{ width: '100%', maxWidth: '1200px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
             <div onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-              {/* Sleek Gradient Icon badge */}
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 900, color: '#fff', boxShadow: `0 0 20px ${C.glow}77` }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 900, color: '#fff' }}>
                 H
               </div>
               <div style={{ fontSize: '24px', fontWeight: '900', letterSpacing: '-0.8px', display: 'flex', alignItems: 'center' }}>
@@ -171,25 +208,42 @@ const Interview = () => {
                 <span style={{ color: '#e9d5ff', fontWeight: '300', marginLeft: '2px' }}>flow</span>
               </div>
             </div>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#fff', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, padding: '5px 14px', borderRadius: '20px', boxShadow: `0 2px 10px ${C.glow}44` }}>Strategy</span>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: '#fff', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, padding: '5px 14px', borderRadius: '20px' }}>Strategy</span>
           </div>
 
-          <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: C.pinkLight, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: C.pink, border: `2px solid ${C.pink}55`, boxShadow: `0 0 12px ${C.pink}33` }}>R</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', minWidth: '220px', justifyContent: 'flex-end' }}>
+            <button 
+              onClick={() => navigate('/')} 
+              style={{ background: 'transparent', border: `1.5px solid ${C.cardBorder}`, color: C.sub, padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+            >
+              ← Dashboard
+            </button>
+
+            <button 
+              onClick={onLogoutClick} 
+              style={{ background: '#160933', border: '1.5px solid #c026d3', color: '#ffffff', padding: '8px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}
+            >
+              Logout
+            </button>
+
+            <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: C.pinkLight, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: C.pink, border: `2px solid ${C.pink}55`, flexShrink: 0 }}>
+              {avatarInitial}
+            </div>
+          </div>
         </div>
       </header>
 
       <div style={{ flex: 1, width: '100%', maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: '220px 1fr 250px', padding: '28px 20px', gap: '20px', minHeight: 0 }}>
-
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <p style={{ fontSize: '11px', fontWeight: 600, color: C.muted, marginBottom: '10px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Sections</p>
           {NAV_ITEMS.map(item => (
-            <button key={item.id} onClick={() => setActiveNav(item.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '10px', border: 'none', background: activeNav === item.id ? `${C.pink}22` : 'transparent', color: activeNav === item.id ? C.sub : C.muted, fontSize: '13px', fontWeight: activeNav === item.id ? 600 : 400, cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'all 0.15s' }}>
+            <button key={item.id} onClick={() => setActiveNav(item.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '10px', border: 'none', background: activeNav === item.id ? `${C.pink}22` : 'transparent', color: activeNav === item.id ? C.sub : C.muted, fontSize: '13px', fontWeight: activeNav === item.id ? 600 : 400, cursor: 'pointer', textAlign: 'left', width: '100%' }}>
               <span style={{ color: activeNav === item.id ? C.pink : C.muted }}>{item.icon}</span>
               {item.label}
             </button>
           ))}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: 'auto', paddingBottom: '16px' }}>
-            <button onClick={() => getResumePdf(interviewId)} style={{ width: '100%', padding: '11px 16px', borderRadius: '10px', background: `linear-gradient(135deg, ${C.pinkMid}, ${C.pink})`, color: 'white', border: 'none', fontSize: '13px', fontWeight: 700, cursor: 'pointer', boxShadow: `0 4px 14px ${C.glow}33` }}>Download Resume</button>
+            {/* 🔥 Removed Download Resume Button from here */}
             <button onClick={() => navigate(`/mock-interview/${interviewId}`)} style={{ width: '100%', padding: '11px 16px', borderRadius: '10px', background: 'transparent', color: C.sub, border: `1.5px solid ${C.pink}`, fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>Start Mock Interview</button>
           </div>
         </nav>
@@ -202,14 +256,14 @@ const Interview = () => {
               {activeNav === 'roadmap' && 'Preparation Road Map'}
             </h2>
             <span style={{ background: `${C.pink}22`, color: C.sub, padding: '3px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 500, border: `1px solid ${C.pink}44` }}>
-              {activeNav === 'technical' && `${report.technicalQuestions.length} questions`}
-              {activeNav === 'behavioral' && `${report.behavioralQuestions.length} questions`}
-              {activeNav === 'roadmap' && `${report.preparationPlan.length}-day plan`}
+              {activeNav === 'technical' && `${report.technicalQuestions?.length || 0} questions`}
+              {activeNav === 'behavioral' && `${report.behavioralQuestions?.length || 0} questions`}
+              {activeNav === 'roadmap' && `${report.preparationPlan?.length || 0}-day plan`}
             </span>
           </div>
           {activeNav === 'technical' && <QuestionList items={report.technicalQuestions} />}
           {activeNav === 'behavioral' && <QuestionList items={report.behavioralQuestions} />}
-          {activeNav === 'roadmap' && report.preparationPlan.map((day) => <RoadMapDay key={day.day} day={day} />)}
+          {activeNav === 'roadmap' && report.preparationPlan?.map((day) => <RoadMapDay key={day.day} day={day} />)}
         </main>
 
         <aside style={{ borderLeft: `1px solid ${C.cardBorder}`, paddingLeft: '16px', overflowY: 'auto' }}>
@@ -224,25 +278,20 @@ const Interview = () => {
           <div>
             <p style={{ fontSize: '11px', fontWeight: 600, color: C.muted, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '14px' }}>Skill Gaps</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {report.skillGaps.map((gap, i) => {
+              {report.skillGaps?.map((gap, i) => {
                 const isGapOpen = expandedGapIndex === i
                 const { bg, text } = severityColor(gap.severity)
                 
                 return (
                   <div key={i} onClick={() => setExpandedGapIndex(isGapOpen ? null : i)} style={{ background: bg, borderRadius: '8px', padding: '10px 12px', cursor: 'pointer', border: isGapOpen ? `1px solid ${C.pink}` : '1px solid transparent', transition: 'all 0.15s ease-in-out', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', width: '100%' }}>
                       <span style={{ color: text, fontSize: '12.5px', fontWeight: 600, lineHeight: 1.3 }}>{gap.skill}</span>
-                      <span style={{ color: text, fontSize: '10px', transform: isGapOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.15s' }}>▼</span>
+                      <span style={{ color: text, fontSize: '10px', transform: isGapOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
                     </div>
                     {isGapOpen && (
-                      <div style={{ fontSize: '13px', color: C.text, lineHeight: '1.6', paddingTop: '10px', borderTop: `1px solid ${text}33`, marginTop: '8px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'left' }}>
+                      <div style={{ fontSize: '13px', color: C.text, lineHeight: '1.6', paddingTop: '10px', borderTop: `1px solid ${text}33`, marginTop: '8px' }}>
                         <span style={{ fontWeight: 700, color: C.sub, display: 'block', marginBottom: '6px' }}>💡 Recommendation:</span>
-                        {gap.solution || gap.recommendation || (
-                          /frontend|react|ui|css|figma/i.test(gap.skill) ? `Build functional components specializing in modular core patterns using ${gap.skill}. Highlight specific UX layout milestones.` :
-                          /testing|jest|mocha|qa/i.test(gap.skill) ? `Configure rigorous validation routines inside localized test scenarios for ${gap.skill}. Implement strict assertion rules.` :
-                          /docker|ansible|ci\/cd|pipeline|aws|cloud/i.test(gap.skill) ? `Orchestrate continuous deployment tasks using specific ${gap.skill} templates. Verify target host playbooks.` :
-                          `Create dedicated reference repositories targeting core logic optimization using ${gap.skill}. Keep records of performance benchmarks.`
-                        )}
+                        {gap.solution || gap.recommendation || `Optimize core benchmarks for ${gap.skill}.`}
                       </div>
                     )}
                   </div>
@@ -251,7 +300,6 @@ const Interview = () => {
             </div>
           </div>
         </aside>
-
       </div>
     </div>
   )
