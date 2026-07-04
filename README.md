@@ -72,9 +72,6 @@ Built with **React (Vite)** on the frontend and **Node.js / Express + MongoDB** 
 
 </div>
 
-> Place your screenshot files in a `screenshots/` folder at the project root with the filenames above (or update the paths to match your own).
-
----
 
 ## ⚙️ Tech Stack
 
